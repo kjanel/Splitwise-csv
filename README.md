@@ -1,5 +1,35 @@
 # splitwise-csv [![Build Status](https://travis-ci.org/esecules/splitwise-csv.svg?branch=master)](https://travis-ci.org/esecules/splitwise-csv)
-Upload expenses to splitwise from a csv file and splitting them evenly between a predefined group. 
+Upload expenses to splitwise from a csv file and splitting them evenly between a predefined group.
+
+## Fast Use
+2 default Monthly statement CSV configurations have been detailed so far (Compte-chèque Desjardins, and Desjardins Mastercard).
+In order to add a configuration that's likely to be reused often, add another attribute options to the CsvSettings class
+```
+class CsvSettings():
+    def __init__(self, rows):
+        print "These are the first two rows of your csv"
+        print '\n'.join([str(t) for t in rows[0:2]])
+        if raw_input("Transactions from Releve Debit Desjardins? [Y/n]").lower() != 'n':
+            self.date_col = 3
+            self.amount_col = 7
+            self.desc_col = 5
+            self.selector_col = 6
+            self.percentage_not_to_split_col = 14
+            self.has_title_row = True
+            self.newest_transaction = ''
+```
+
+Columns that need to be specified in this format are the following:
+- `self.date_col` : column number (starting with 0) where the date is specified in the CSV. Note that depending on the date format, the variable `csvDateFormat="%Y-%m-%d" ` might need to be changed to be processed accordingly by strftime
+- `self.amount_col` : column number where the amount is specified
+- `self.desc_col` : column number where the expense description is specified
+- `self.selector_col` : column number where there is an "x" for every expense in the CSV that needs to be considered
+- `self.percentage_not_to_split_col` : column number where a 0 to 1 percentage is specified if a part of the expense must NOT be split
+- `self.has_title_row` : whether the CSV's first row is for titles or not
+- `self.local_currency` : currency of all expenses in the CSV (default to "CAD')
+
+Interesting flag: use `-y`when calling in the CLI to automatically accept all the expenses specified with "x" without reviewing one by one in the CLI
+
 
 ## API Keys
 You will need to obtain your own API keys from Splitwise.
